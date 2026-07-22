@@ -3,18 +3,25 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Tableau de bord | {{ strtoupper($userType) }}</title>
+    <title>{{ $pageTitle ?? 'Tableau de bord' }} | {{ strtoupper($userType) }}</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 <body class="bg-body-tertiary">
     @php
         $label = strtoupper($userType);
-        $navigation = [
-            ['label' => 'Vue d\'ensemble', 'active' => true],
-            ['label' => 'Utilisateurs', 'active' => false],
-            ['label' => 'Rapports', 'active' => false],
-            ['label' => 'Paramètres', 'active' => false],
-        ];
+        $activePage = $activePage ?? 'dashboard';
+        $pageTitle = $pageTitle ?? 'Tableau de bord';
+        $navigation = $userType === 'prof'
+            ? [
+                ['label' => 'Note', 'route' => route('prof.note'), 'active' => $activePage === 'note'],
+                ['label' => 'Stat', 'route' => route('prof.stat'), 'active' => $activePage === 'stat'],
+            ]
+            : [
+                ['label' => 'Vue d\'ensemble', 'route' => route($userType.'.dashboard'), 'active' => true],
+                ['label' => 'Utilisateurs', 'route' => route($userType.'.dashboard'), 'active' => false],
+                ['label' => 'Rapports', 'route' => route($userType.'.dashboard'), 'active' => false],
+                ['label' => 'Paramètres', 'route' => route($userType.'.dashboard'), 'active' => false],
+            ];
         $stats = [
             ['label' => 'Dossiers actifs', 'value' => '128', 'trend' => '+12%', 'variant' => 'primary'],
             ['label' => 'Tâches terminées', 'value' => '84', 'trend' => '+8%', 'variant' => 'success'],
@@ -34,7 +41,7 @@
 
             <nav class="nav nav-pills flex-column gap-2">
                 @foreach ($navigation as $item)
-                    <a class="nav-link d-flex align-items-center gap-3 {{ $item['active'] ? 'active' : 'text-white-50' }}" href="#">
+                   <a class="nav-link d-flex align-items-center gap-3 {{ $item['active'] ? 'active' : 'text-white-50' }}" href="{{ $item['route'] }}">
                         <span class="nav-dot"></span>
                         {{ $item['label'] }}
                     </a>
@@ -54,7 +61,7 @@
                         ☰
                     </button>
                     <div class="ms-3 ms-lg-0">
-                        <span class="navbar-brand mb-0 h1 fw-bold">Tableau de bord</span>
+                        <span class="navbar-brand mb-0 h1 fw-bold">{{ $pageTitle }}</span>
                         <span class="badge rounded-pill text-bg-primary">{{ $label }}</span>
                     </div>
 
@@ -157,7 +164,7 @@
         <div class="offcanvas-body">
             <nav class="nav nav-pills flex-column gap-2">
                 @foreach ($navigation as $item)
-                    <a class="nav-link {{ $item['active'] ? 'active' : 'text-white-50' }}" href="#">{{ $item['label'] }}</a>
+                   <a class="nav-link {{ $item['active'] ? 'active' : 'text-white-50' }}" href="{{ $item['route'] }}">{{ $item['label'] }}</a>
                 @endforeach
             </nav>
         </div>

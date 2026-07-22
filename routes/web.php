@@ -5,6 +5,11 @@ use Illuminate\Support\Facades\Route;
 
 $userTypes = ['admin', 'cell', 'prof', 'eco'];
 
+$profPages = [
+    'note' => 'Note',
+    'stat' => 'Stat',
+];
+
 Route::get('/', function (Request $request) {
     $userType = $request->session()->get('user_type');
 
@@ -56,8 +61,32 @@ foreach ($userTypes as $userType) {
             return redirect()->route($authenticatedUserType.'.dashboard');
         }
 
-        return view('dashboard', ['userType' => $userType]);
+         return view('dashboard', ['userType' => $userType, 'activePage' => 'dashboard']);
     })->name($userType.'.dashboard');
+}
+
+foreach ($profPages as $page => $title) {
+    Route::get('/prof/'.$page, function (Request $request) use ($page, $title) {
+        if ($request->session()->get('authenticated') !== true) {
+            return redirect()->route('login');
+        }
+
+        $authenticatedUserType = $request->session()->get('user_type');
+
+        if (! is_string($authenticatedUserType)) {
+            return redirect()->route('login');
+        }
+
+        if ($authenticatedUserType !== 'prof') {
+            return redirect()->route($authenticatedUserType.'.dashboard');
+        }
+
+        return view('dashboard', [
+            'userType' => 'prof',
+            'activePage' => $page,
+            'pageTitle' => $title,
+        ]);
+    })->name('prof.'.$page);
 }
 
 Route::get('/dashboard', function (Request $request) {

@@ -40,6 +40,37 @@ class AuthentificationTest extends TestCase
             ->assertRedirect(route('prof.dashboard'));
     }
 
+    public function test_prof_space_displays_note_and_stat_menus(): void
+    {
+        $this->withSession([
+            'authenticated' => true,
+            'user_type' => 'prof',
+        ])->get('/prof/dashboard')
+            ->assertOk()
+            ->assertSee('Note')
+            ->assertSee('/prof/note')
+            ->assertSee('Stat')
+            ->assertSee('/prof/stat');
+    }
+
+    #[DataProvider('profPages')]
+    public function test_prof_pages_are_accessible_to_prof_users(string $path, string $title): void
+    {
+        $this->withSession([
+            'authenticated' => true,
+            'user_type' => 'prof',
+        ])->get($path)
+            ->assertOk()
+            ->assertSee($title)
+            ->assertSee('Bienvenue, PROF');
+    }
+
+    public function test_prof_pages_redirect_guests_to_login(): void
+    {
+        foreach (['/prof/note', '/prof/stat'] as $path) {
+            $this->get($path)->assertRedirect(route('login'));
+        }
+    }
     public function test_invalid_credentials_are_rejected(): void
     {
         $this->from('/login')->post('/login', [
@@ -65,4 +96,13 @@ class AuthentificationTest extends TestCase
             'eco' => ['eco'],
         ];
     }
+
+    public static function profPages(): array
+    {
+        return [
+            'note' => ['/prof/note', 'Note'],
+            'stat' => ['/prof/stat', 'Stat'],
+        ];
+    }
 }
+
