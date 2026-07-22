@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 use Tests\TestCase;
 
 class AuthenticationTest extends TestCase
@@ -14,17 +15,29 @@ class AuthenticationTest extends TestCase
             ->assertSee('Identifiants par défaut');
     }
 
-    public function test_admin_can_login_with_default_credentials(): void
+    #[DataProvider('userTypes')]
+    public function test_users_are_automatically_redirected_to_their_space(string $userType): void
     {
         $this->post('/login', [
-            'login' => 'admin',
-            'password' => 'admin',
-        ])->assertRedirect(route('dashboard'));
-
-        $this->withSession(['authenticated' => true])
-            ->get('/dashboard')
+            'login' => $userType,
+            'password' => $userType,
+        ])->assertRedirect(route($userType.'.dashboard'));
+        
+        $this->withSession([
+            'authenticated' => true,
+            'user_type' => $userType,
+        ])->get('/'.$userType)
             ->assertOk()
-            ->assertSee('Bienvenue, admin');
+            ->assertSee('Bienvenue, '.$userType);
+    }
+
+    public function test_authenticated_user_cannot_access_another_user_type_space(): void
+    {
+        $this->withSession([
+            'authenticated' => true,
+            'user_type' => 'prof',
+        ])->get('/admin')
+            ->assertRedirect(route('prof.dashboard'));
     }
 
     public function test_invalid_credentials_are_rejected(): void
@@ -36,8 +49,20 @@ class AuthenticationTest extends TestCase
             ->assertSessionHasErrors('login');
     }
 
-    public function test_dashboard_redirects_guests_to_login(): void
+    public function test_user_type_spaces_redirect_guests_to_login(): void
     {
-        $this->get('/dashboard')->assertRedirect(route('login'));
+        foreach (['admin', 'cell', 'prof', 'eco'] as $userType) {
+            $this->get('/'.$userType)->assertRedirect(route('login'));
+        }
+    }
+
+     public static function userTypes(): array
+    {
+       return [
+            'admin' => ['admin'],
+            'cell' => ['cell'],
+            'prof' => ['prof'],
+            'eco' => ['eco'],
+        ];
     }
 }

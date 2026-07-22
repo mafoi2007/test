@@ -55,7 +55,8 @@
             </form>
 
             <p class="mt-6 rounded-2xl bg-slate-50 px-4 py-3 text-center text-sm text-slate-600">
-                Identifiants par défaut : <strong>admin</strong> / <strong>admin</strong>
+                Identifiants par défaut : <strong>admin</strong>, <strong>cell</strong>, <strong>prof</strong> ou <strong>eco</strong> (mot de passe identique au login)
+
             </p>
         </section>
     </main>
