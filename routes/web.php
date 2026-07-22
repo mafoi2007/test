@@ -41,7 +41,7 @@ Route::post('/login', function (Request $request) use ($userTypes) {
 })->name('login.attempt');
 
 foreach ($userTypes as $userType) {
-    Route::get('/'.$userType, function (Request $request) use ($userType) {
+    Route::get('/'.$userType.'/dashboard', function (Request $request) use ($userType) {
         if ($request->session()->get('authenticated') !== true) {
             return redirect()->route('login');
         }

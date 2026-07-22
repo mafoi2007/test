@@ -5,7 +5,7 @@ namespace Tests\Feature;
 use PHPUnit\Framework\Attributes\DataProvider;
 use Tests\TestCase;
 
-class AuthenticationTest extends TestCase
+class AuthentificationTest extends TestCase
 {
     public function test_login_page_is_displayed(): void
     {
@@ -26,9 +26,9 @@ class AuthenticationTest extends TestCase
         $this->withSession([
             'authenticated' => true,
             'user_type' => $userType,
-        ])->get('/'.$userType)
+        ])->get('/'.$userType.'/dashboard')
             ->assertOk()
-            ->assertSee('Bienvenue, '.$userType);
+            ->assertSee('Bienvenue, '.strtoupper($userType));
     }
 
     public function test_authenticated_user_cannot_access_another_user_type_space(): void
@@ -36,7 +36,7 @@ class AuthenticationTest extends TestCase
         $this->withSession([
             'authenticated' => true,
             'user_type' => 'prof',
-        ])->get('/admin')
+         ])->get('/admin/dashboard')
             ->assertRedirect(route('prof.dashboard'));
     }
 
@@ -52,7 +52,7 @@ class AuthenticationTest extends TestCase
     public function test_user_type_spaces_redirect_guests_to_login(): void
     {
         foreach (['admin', 'cell', 'prof', 'eco'] as $userType) {
-            $this->get('/'.$userType)->assertRedirect(route('login'));
+            $this->get('/'.$userType.'/dashboard')->assertRedirect(route('login'));
         }
     }
 
