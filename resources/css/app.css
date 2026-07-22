@@ -11,3 +11,55 @@
     --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
         'Segoe UI Symbol', 'Noto Color Emoji';
 }
+
+.dashboard-shell {
+    background: #f4f7fb;
+}
+
+.sidebar {
+    width: 290px;
+    background: linear-gradient(180deg, #101828 0%, #172033 100%) !important;
+}
+
+.brand-mark {
+    width: 3rem;
+    height: 3rem;
+    background: linear-gradient(135deg, #4f46e5, #06b6d4);
+}
+
+.sidebar .nav-link {
+    border-radius: 1rem;
+    padding: 0.85rem 1rem;
+}
+
+.sidebar .nav-link.active,
+.offcanvas .nav-link.active {
+    background: linear-gradient(135deg, #4f46e5, #2563eb);
+    box-shadow: 0 1rem 2rem rgba(37, 99, 235, 0.22);
+}
+
+.hero-card {
+    background:
+        radial-gradient(circle at top right, rgba(14, 165, 233, 0.55), transparent 28rem),
+        linear-gradient(135deg, #111827 0%, #1d4ed8 100%);
+}
+
+.letter-spaced {
+    letter-spacing: 0.14em;
+}
+
+.text-white-75 {
+    color: rgba(255, 255, 255, 0.75);
+}
+
+.backdrop-blur {
+    backdrop-filter: blur(16px);
+}
+
+.nav-dot {
+    width: 0.55rem;
+    height: 0.55rem;
+    border-radius: 999px;
+    background: currentColor;
+    opacity: 0.8;
+}
